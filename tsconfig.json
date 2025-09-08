@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Node ESM
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es6",
+
+    // Environment
+    "lib": ["ES2022"],
+    "types": ["node"],
+
+    // Emission
+    "sourceMap": true,
+    "declaration": false,
+    "declarationMap": false,
+
+    // Type safety
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Interop and tooling
+    "isolatedModules": true,
+    // "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+
+    // Optional stricter style:
+    // "noImplicitReturns": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": ["src/config/*"],
+      "@shared/*": ["src/shared/*"],
+      "@database/*": ["src/database/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,30 @@
+services:
+  user-service:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    container_name: user-service
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres@sha256:3406990b6e4c7192317b6fdc5680498744f6142f01f0287f4ee0420d8c74063c
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+
+  swagger:
+    image: swaggerapi/swagger-ui:v5.29.0
+    ports:
+      - 8080:8080
+    environment:
+      SWAGGER_JSON: /openapi.yaml
+    volumes:
+      - ./openapi.yaml:/openapi.yaml:ro
