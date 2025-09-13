@@ -2,9 +2,9 @@ openapi: 3.1.0
 info:
   title: User Service API
   version: 1.0.0
-  description: REST API for user management (Express + TypeORM + Zod)
+  description: REST API for user management
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/v1
 
 paths:
   /users/{id}:
@@ -78,6 +78,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /health:
+    get:
+      summary: Check if service healthy
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUser"
 components:
   schemas:
     GetUser:
