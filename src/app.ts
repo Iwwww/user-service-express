@@ -7,6 +7,7 @@ import logger from "@config/logger";
 import compression from "compression";
 import { MainRouter as v1 } from "./routes";
 import { ALLOWED_ORIGINS_CORS } from "@shared/utils/secrets.utils";
+import errorHandler from "@shared/middlewares/errorHandler";
 
 const corsOptions = {
   origin: ALLOWED_ORIGINS_CORS || ["localhost", "127.0.0.1"],
@@ -21,5 +22,6 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(pinoHttp({ logger }));
 app.use("/v1", v1);
+app.use(errorHandler);
 
 export default app;
