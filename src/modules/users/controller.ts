@@ -9,18 +9,14 @@ export async function getUserById(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  try {
-    const user = await findUserById(req.params.id);
+  const user = await findUserById(req.params.id);
 
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
-    const safe = GetUserSchema.parse(user);
-    res.json(safe);
-  } catch (err) {
-    next(err);
+  if (!user) {
+    throw new NotFoundError("User not found");
   }
+
+  const safe = GetUserSchema.parse(user);
+  res.json(safe);
 }
 
 export async function postUser(
@@ -28,14 +24,10 @@ export async function postUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  try {
-    const user: CreateUser = CreateUserSchema.parse(req.body);
-    const created = await createUser(user);
+  const user: CreateUser = CreateUserSchema.parse(req.body);
+  const created = await createUser(user);
 
-    const safe = GetUserSchema.parse(created);
+  const safe = GetUserSchema.parse(created);
 
-    res.status(201).json(safe);
-  } catch (err) {
-    next(err);
-  }
+  res.status(201).json(safe);
 }
