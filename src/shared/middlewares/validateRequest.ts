@@ -13,10 +13,6 @@ export const validateRequest =
 
       next();
     } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(409).send({ message: err.issues[0]?.message });
-      }
-
-      return res.status(500).send(err);
+      next(err);
     }
   };
