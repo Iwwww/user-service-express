@@ -1,11 +1,7 @@
 import { AppDataSource } from "@database/data-source";
 import { UserEntity } from "@database/entities/User";
 import { CreateUser } from "./schemas/createUser.schema";
-import {} from "typescript";
-import { AppError } from "@shared/types";
 import { ConflictError } from "@shared/errors/AppError";
-import logger from "@config/logger";
-import { QueryFailedError } from "typeorm";
 
 export async function findUserById(id: string): Promise<UserEntity | null> {
   const repo = AppDataSource.getRepository(UserEntity);
@@ -13,6 +9,21 @@ export async function findUserById(id: string): Promise<UserEntity | null> {
     where: {
       id: id,
     },
+    select: {
+      id: true,
+      fullName: true,
+      birthDate: true,
+      email: true,
+      role: true,
+      isActive: true,
+    },
+  });
+}
+
+export async function findUsers(): Promise<UserEntity[]> {
+  const repo = AppDataSource.getRepository(UserEntity);
+
+  return await repo.find({
     select: {
       id: true,
       fullName: true,
