@@ -12,6 +12,7 @@ export const ALLOWED_ORIGINS_CORS = (
 )
   .split(",")
   .map((s) => s.trim()) || ["localhost", "127.0.0.1"];
+export const LOG_LEVEL = defaultTo(process.env.APP_LOG_LEVEL, "info");
 export const LOG_DIRECTORY = defaultTo(
   process.env.APP_LOG_DIRECTORY,
   path.resolve("logs"),
