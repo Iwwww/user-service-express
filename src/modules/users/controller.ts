@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser, findUserById, findUsers } from "./service";
+import {
+  deactivateUser,
+  createUser,
+  findUserById,
+  findUsers,
+  activateUser,
+} from "./service";
 import { GetUserSchema } from "./dto/user.dto";
 import { CreateUser, CreateUserSchema } from "./schemas/createUser.schema";
 import { NotFoundError } from "@shared/errors/AppError";
@@ -43,4 +49,24 @@ export async function postUser(
   const safe = GetUserSchema.parse(created);
 
   res.status(201).json(safe);
+}
+
+export async function putUserBlock(
+  req: Request<{ id: string }>,
+  res: Response,
+  _next: NextFunction,
+): Promise<void> {
+  await deactivateUser(req.params.id);
+
+  res.status(204).json("User blocked");
+}
+
+export async function deleteUserBlock(
+  req: Request<{ id: string }>,
+  res: Response,
+  _next: NextFunction,
+): Promise<void> {
+  await activateUser(req.params.id);
+
+  res.status(204).json("User unblocked");
 }

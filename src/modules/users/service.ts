@@ -1,7 +1,7 @@
 import { AppDataSource } from "@database/data-source";
 import { UserEntity } from "@database/entities/User";
 import { CreateUser } from "./schemas/createUser.schema";
-import { ConflictError } from "@shared/errors/AppError";
+import { ConflictError, NotFoundError } from "@shared/errors/AppError";
 
 export async function findUserById(id: string): Promise<UserEntity | null> {
   const repo = AppDataSource.getRepository(UserEntity);
@@ -55,4 +55,30 @@ export async function createUser(dto: CreateUser): Promise<UserEntity> {
     }
     throw err;
   }
+}
+
+export async function deactivateUser(id: string): Promise<void> {
+  const repo = AppDataSource.getRepository(UserEntity);
+
+  const entity = await repo.findOneBy({ id: id });
+
+  if (!entity) {
+    throw new NotFoundError("User not found");
+  }
+
+  entity.isActive = false;
+  await repo.save(entity);
+}
+
+export async function activateUser(id: string): Promise<void> {
+  const repo = AppDataSource.getRepository(UserEntity);
+
+  const entity = await repo.findOneBy({ id: id });
+
+  if (!entity) {
+    throw new NotFoundError("User not found");
+  }
+
+  entity.isActive = true;
+  await repo.save(entity);
 }
