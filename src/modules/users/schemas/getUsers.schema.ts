@@ -1,4 +1,4 @@
 import z from "zod";
-import { GetUserSchema } from "./getUser.schema";
+import { PublicUserSchema } from "@shared/schemas/PublicUserSchema";
 
-export const GetUsersSchema = z.array(GetUserSchema);
+export const GetUsersSchema = z.array(PublicUserSchema);

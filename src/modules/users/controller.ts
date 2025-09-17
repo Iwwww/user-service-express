@@ -1,15 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import {
   deactivateUser,
-  createUser,
   findUserById,
   findUsers,
   activateUser,
 } from "./service";
-import { GetUserSchema } from "./dto/user.dto";
-import { CreateUser, CreateUserSchema } from "./schemas/createUser.schema";
 import { NotFoundError } from "@shared/errors/AppError";
 import { GetUsersSchema } from "./schemas/getUsers.schema";
+import { PublicUserSchema } from "@shared/schemas/PublicUserSchema";
 
 export async function getUserById(
   req: Request<{ id: string }>,
@@ -22,7 +20,7 @@ export async function getUserById(
     throw new NotFoundError("User not found");
   }
 
-  const safe = GetUserSchema.parse(user);
+  const safe = PublicUserSchema.parse(user);
   res.json(safe);
 }
 
@@ -36,19 +34,6 @@ export async function getUsers(
   const safe = GetUsersSchema.parse(users);
 
   res.json(safe);
-}
-
-export async function postUser(
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-): Promise<void> {
-  const user: CreateUser = CreateUserSchema.parse(req.body);
-  const created = await createUser(user);
-
-  const safe = GetUserSchema.parse(created);
-
-  res.status(201).json(safe);
 }
 
 export async function putUserBlock(

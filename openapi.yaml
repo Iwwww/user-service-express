@@ -5,8 +5,104 @@ info:
   description: REST API for user management
 servers:
   - url: http://localhost:3000/v1
-
 paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Register"
+      responses:
+        "201":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "409":
+          description: Conflict (e.g., email already exists)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "401":
+          description: Unauthorized (invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      description: Exchanges a valid refresh token from cookie  for a new access token.
+      responses:
+        "200":
+          description: New access token issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+        "401":
+          description: Unauthorized (missing or invalid refresh token)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /users/{id}:
     get:
       tags: [Users]
@@ -55,40 +151,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetUsers"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    post:
-      tags: [Users]
-      summary: Create user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateUser"
-      responses:
-        "201":
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetUser"
-        "400":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationError"
-        "409":
-          description: Conflict (e.g., email already exists)
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
         "500":
           description: Internal server error
           content:
@@ -216,7 +278,7 @@ components:
       items:
         $ref: "#/components/schemas/GetUser"
 
-    CreateUser:
+    Register:
       type: object
       required: [fullName, birthDate, email, password]
       properties:
@@ -237,6 +299,67 @@ components:
           type: string
           enum: [user, admin]
           default: user
+
+    RegisterResponse:
+      type: object
+      required: [message, data]
+      properties:
+        message:
+          type: string
+          example: User registered successfully
+        data:
+          type: object
+          required: [user, accessToken]
+          properties:
+            user:
+              $ref: "#/components/schemas/GetUser"
+            accessToken:
+              type: string
+              description: JWT access token for the user
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Login:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          minLength: 1
+          example: stringst
+    LoginResponse:
+      type: object
+      required: [message, data]
+      properties:
+        message:
+          type: string
+          example: Login successful
+        data:
+          type: object
+          required: [user, accessToken]
+          properties:
+            user:
+              $ref: "#/components/schemas/GetUser"
+            accessToken:
+              type: string
+              description: JWT access token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    RefreshResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [accessToken]
+          properties:
+            accessToken:
+              type: string
+              description: Newly issued JWT access token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
     Error:
       type: object
@@ -276,4 +399,4 @@ components:
       properties:
         message:
           type: string
-          example: Resource access denay
+          example: Resource access denied

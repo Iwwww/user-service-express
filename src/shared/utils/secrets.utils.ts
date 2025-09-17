@@ -17,7 +17,16 @@ export const LOG_DIRECTORY = defaultTo(
   process.env.APP_LOG_DIRECTORY,
   path.resolve("logs"),
 );
-export const JWT_SECRET = defaultTo(process.env.JWT_SECRET, "secret");
+export const JWT_ACCESS_SECRET = defaultTo(
+  process.env.JWT_ACCESS_SECRET,
+  "jwt_access_secret-at-least-256-bits-long",
+);
+export const JWT_REFRESH_SECRET = defaultTo(
+  process.env.JWT_REFRESH_SECRET,
+  "jwt_refresh_secret-at-least-256-bits-long",
+);
+export const JWT_ACCESS_TTL = defaultTo(process.env.JWT_ACCESS_TTL, "2m");
+export const JWT_REFRESH_TTL = defaultTo(process.env.JWT_REFRESH_TTL, "7d");
 export const DB = {
   USER: defaultTo(process.env.DB_USER, "root"),
   PASSWORD: defaultTo(process.env.DB_PASSWORD, "password"),
