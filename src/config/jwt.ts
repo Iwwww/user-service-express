@@ -6,6 +6,16 @@ import {
   JWT_ACCESS_SECRET,
 } from "@shared/utils/secrets.utils";
 
+export interface JwtAccessPayload {
+  id: string;
+  email: string;
+  role: string;
+}
+
+export interface JwtRefreshPayload {
+  id: string;
+}
+
 export interface JwtConfig {
   issuer: string;
   audience: string;

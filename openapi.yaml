@@ -5,10 +5,13 @@ info:
   description: REST API for user management
 servers:
   - url: http://localhost:3000/v1
+security:
+  - BearerAuth: []
 paths:
   /auth/register:
     post:
       tags: [Auth]
+      security: []
       summary: Register new user
       requestBody:
         required: true
@@ -45,6 +48,7 @@ paths:
   /auth/login:
     post:
       tags: [Auth]
+      security: []
       summary: Login user
       requestBody:
         required: true
@@ -81,6 +85,7 @@ paths:
   /auth/refresh:
     post:
       tags: [Auth]
+      security: []
       summary: Refresh access token
       description: Exchanges a valid refresh token from body for a new access token.
       requestBody:
@@ -244,6 +249,7 @@ paths:
 
   /health:
     get:
+      security: []
       summary: Check if service healthy
       responses:
         "200":
@@ -255,6 +261,12 @@ paths:
                 example: Service is healthy
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     GetUser:
       type: object

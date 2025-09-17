@@ -8,8 +8,11 @@ import {
 import { validateRequest } from "@shared/middlewares/validateRequest";
 import { GetUserParamSchema } from "./schemas/getUser.schema";
 import { BlockUserParamSchema } from "./schemas/blockUser.schema";
+import { authenticateToken } from "@shared/middlewares/auth.middleware";
 
 const router: Router = Router();
+
+router.use(authenticateToken);
 
 router.get("/:id", validateRequest(GetUserParamSchema), getUserById);
 router.get("/", getUsers);

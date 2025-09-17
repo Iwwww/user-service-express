@@ -5,7 +5,13 @@ import { RegisterData } from "./schemas/register.schema";
 import { AppDataSource } from "@database/data-source";
 import { ConflictError, UnauthorizedError } from "@shared/errors/AppError";
 import { BCRYPT_COST } from "@config/password";
-import { jwtAccessConfig, JwtConfig, jwtRefreshConfig } from "@config/jwt";
+import {
+  jwtAccessConfig,
+  JwtAccessPayload,
+  JwtConfig,
+  jwtRefreshConfig,
+  JwtRefreshPayload,
+} from "@config/jwt";
 import { LoginData } from "./schemas/login.schema";
 import { GetUser } from "../users/dto/user.dto";
 import { PublicUserSchema } from "@shared/schemas/PublicUserSchema";
@@ -103,7 +109,7 @@ export async function refreshAccessToken(
 }
 
 export function generateRefreshToken(user: UserEntity): string {
-  const payload = { id: user.id };
+  const payload: JwtRefreshPayload = { id: user.id };
   return jwt.sign(payload, jwtRefreshConfig.secret, {
     expiresIn: jwtRefreshConfig.expiresIn,
     issuer: jwtRefreshConfig.issuer,
@@ -112,7 +118,11 @@ export function generateRefreshToken(user: UserEntity): string {
 }
 
 export function generateAccessToken(user: UserEntity): string {
-  const payload = { id: user.id, email: user.email, role: user.role };
+  const payload: JwtAccessPayload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
   return jwt.sign(payload, jwtAccessConfig.secret, {
     expiresIn: jwtAccessConfig.expiresIn,
     issuer: jwtAccessConfig.issuer,
