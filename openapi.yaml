@@ -82,7 +82,13 @@ paths:
     post:
       tags: [Auth]
       summary: Refresh access token
-      description: Exchanges a valid refresh token from cookie  for a new access token.
+      description: Exchanges a valid refresh token from body for a new access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Refresh"
       responses:
         "200":
           description: New access token issued
@@ -309,13 +315,17 @@ components:
           example: User registered successfully
         data:
           type: object
-          required: [user, accessToken]
+          required: [user, accessToken, refreshToken]
           properties:
             user:
               $ref: "#/components/schemas/GetUser"
             accessToken:
               type: string
               description: JWT access token for the user
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            refreshToken:
+              type: string
+              description: JWT refresh token for the user
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
     Login:
@@ -340,7 +350,7 @@ components:
           example: Login successful
         data:
           type: object
-          required: [user, accessToken]
+          required: [user, accessToken, refreshToken]
           properties:
             user:
               $ref: "#/components/schemas/GetUser"
@@ -348,17 +358,34 @@ components:
               type: string
               description: JWT access token
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            refreshToken:
+              type: string
+              description: JWT refresh token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Refresh:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     RefreshResponse:
       type: object
       required: [data]
       properties:
         data:
           type: object
-          required: [accessToken]
+          required: [accessToken, refreshToken]
           properties:
             accessToken:
               type: string
               description: Newly issued JWT access token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            refreshToken:
+              type: string
+              description: Newly issued JWT refresh token
               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
     Error:
