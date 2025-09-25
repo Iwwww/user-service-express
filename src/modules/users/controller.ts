@@ -43,7 +43,7 @@ export async function putUserBlock(
 ): Promise<void> {
   await deactivateUser(req.params.id);
 
-  res.status(204).json("User blocked");
+  res.status(204).end();
 }
 
 export async function deleteUserBlock(
@@ -53,5 +53,5 @@ export async function deleteUserBlock(
 ): Promise<void> {
   await activateUser(req.params.id);
 
-  res.status(204).json("User unblocked");
+  res.status(204).end();
 }

@@ -1,4 +1,4 @@
-import logger from "@config/logger";
+import { JwtAccessPayload, JwtRefreshPayload } from "@config/jwt";
 import { UserEntity } from "@database/entities/User";
 import { ForbiddenError } from "@shared/errors/AppError";
 import { Request, Response, NextFunction } from "express";
@@ -10,16 +10,19 @@ export interface PermissionContext {
 }
 
 export abstract class BasePermission {
-  static check(context: PermissionContext): boolean {
+  static check(_context: PermissionContext): boolean {
     return true;
   }
 }
 
 export const requirePermissions =
   (permissions: (typeof BasePermission)[]) =>
-  async (req: Request, _res: Response, next: NextFunction) => {
-    logger.debug("middleware requirePermisions");
-    const user = (req as any).user;
+  async (
+    req: Request<JwtAccessPayload>,
+    _res: Response,
+    next: NextFunction,
+  ) => {
+    const user: JwtRefreshPayload = req.user;
 
     if (!user) {
       throw new ForbiddenError("Authentication required");
@@ -32,7 +35,6 @@ export const requirePermissions =
     };
 
     for (const p of permissions) {
-      logger.debug("running in permission for loop");
       if (!p.check(context)) {
         throw new ForbiddenError("Insufficient permissions");
       }

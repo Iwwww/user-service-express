@@ -8,7 +8,6 @@ import { BCRYPT_COST } from "@config/password";
 import {
   jwtAccessConfig,
   JwtAccessPayload,
-  JwtConfig,
   jwtRefreshConfig,
   JwtRefreshPayload,
 } from "@config/jwt";
@@ -55,7 +54,7 @@ export async function loginUser(
   const repo = AppDataSource.getRepository(UserEntity);
 
   const user = await repo.findOne({
-    where: { email: loginData.email },
+    where: { email: loginData.email.toLowerCase() },
     select: {
       id: true,
       email: true,
@@ -68,7 +67,7 @@ export async function loginUser(
   });
 
   if (!user || !user.isActive) {
-    throw new UnauthorizedError("Invalid credetials");
+    throw new UnauthorizedError("Invalid credentials");
   }
 
   const isValidPassword = await bcrypt.compare(
@@ -76,7 +75,7 @@ export async function loginUser(
     user.passwordHash,
   );
   if (!isValidPassword) {
-    throw new UnauthorizedError("Invalid credetials");
+    throw new UnauthorizedError("Invalid credentials");
   }
 
   const refreshToken = generateRefreshToken(user);
@@ -91,9 +90,14 @@ export async function refreshAccessToken(
   token: string,
   refreshSecret: string,
 ): Promise<{ refreshToken: string; accessToken: string }> {
-  const decoded = jwt.verify(token, refreshSecret, { complete: false }) as {
-    id: string;
-  };
+  let decoded: { id: string };
+  try {
+    decoded = jwt.verify(token, refreshSecret) as {
+      id: string;
+    };
+  } catch {
+    throw new UnauthorizedError("Invalid refresh token");
+  }
 
   const repo = AppDataSource.getRepository(UserEntity);
   const user = await repo.findOneBy({ id: decoded.id, isActive: true });
