@@ -17,12 +17,8 @@ export abstract class BasePermission {
 
 export const requirePermissions =
   (permissions: (typeof BasePermission)[]) =>
-  async (
-    req: Request<JwtAccessPayload>,
-    _res: Response,
-    next: NextFunction,
-  ) => {
-    const user: JwtRefreshPayload = req.user;
+  async (req: Request, _res: Response, next: NextFunction) => {
+    const user = (req as any).user;
 
     if (!user) {
       throw new ForbiddenError("Authentication required");
